@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:quiz_app_api/completed.dart';
 import 'package:quiz_app_api/options.dart';
 
 class HomePage extends StatelessWidget {
@@ -99,7 +100,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Options(option: 'Option A'),
             Options(option: 'Option B'),
             Options(option: 'Option C'),
@@ -116,7 +117,12 @@ class HomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10)),
                   elevation: 5,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Completed()),
+                  );
+                },
                 child: Container(
                   alignment: Alignment.center,
                   child: const Text(

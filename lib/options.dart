@@ -28,6 +28,9 @@ class Options extends StatelessWidget {
               ],
             ),
           )),
+        ),
+        SizedBox(
+          height: 10,
         )
       ],
     );
