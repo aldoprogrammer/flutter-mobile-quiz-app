@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:quiz_app_api/options.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -99,6 +100,11 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            Options(option: 'Option A'),
+            Options(option: 'Option B'),
+            Options(option: 'Option C'),
+            Options(option: 'Option D'),
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: ElevatedButton(
