@@ -27,38 +27,42 @@ class Completed extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 71,
                         backgroundColor: Colors.white.withOpacity(.4),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Your Score',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xffA42FC1),
-                                ),
-                              ),
-                              RichText(
-                                text: const TextSpan(
-                                  text: '100',
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.white,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Your Score',
                                   style: TextStyle(
                                     fontSize: 20,
-                                    fontWeight: FontWeight.bold,
                                     color: Color(0xffA42FC1),
                                   ),
-                                  children: [
-                                    TextSpan(
-                                      text: ' pt',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xffA42FC1),
-                                      ),
-                                    )
-                                  ],
                                 ),
-                              ),
-                            ],
+                                RichText(
+                                  text: const TextSpan(
+                                    text: '100',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xffA42FC1),
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: ' pt',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color(0xffA42FC1),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -230,6 +234,34 @@ class Completed extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(
+            height: 40,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 25, right: 0),
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: BorderSide.strokeAlignCenter),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(children: [
+                      CircleAvatar(
+                        backgroundColor: Color(0xff37AFA1),
+                        radius: 35,
+                        child: Center(
+                          child: Icon(Icons.refresh,
+                              size: 35,
+                              color: Colors.white), // Use 'Icons.refresh' here
+                        ),
+                      )
+                    ])
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
