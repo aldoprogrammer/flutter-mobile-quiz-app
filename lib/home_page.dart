@@ -1,3 +1,4 @@
+import 'dart:convert'; // Import for jsonDecode
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -5,14 +6,34 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:quiz_app_api/completed.dart';
 import 'package:quiz_app_api/options.dart';
-import 'package:http/http.dart' as htpp;
+import 'package:http/http.dart' as http; // Make sure to fix typo: htpp to http
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List responseData = [];
+  int number = 0;
 
   Future api() async {
     final response =
-        await htpp.get(Uri.parse("https://opentdb.com/api.php?amount=10"));
+        await http.get(Uri.parse("https://opentdb.com/api.php?amount=10"));
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['results'];
+      setState(() {
+        responseData = data;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    api();
   }
 
   @override
@@ -51,11 +72,11 @@ class HomePage extends StatelessWidget {
                                 spreadRadius: 3,
                                 color: const Color(0xffA42FC1).withOpacity(.4))
                           ]),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 18),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Column(
                           children: [
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
@@ -70,18 +91,20 @@ class HomePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Center(
+                            const Center(
                               child: Text(
-                                "Qestion 3/10",
+                                "Question 3/10",
                                 style: TextStyle(
                                   color: Color(0xffA42FC1),
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 25,
                             ),
-                            Text('What is computer?')
+                            Text(responseData.isNotEmpty
+                                ? responseData[number]['question']
+                                : '')
                           ],
                         ),
                       ),
@@ -116,7 +139,7 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xffA42FC1),
+                  backgroundColor: const Color(0xffA42FC1),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   shape: RoundedRectangleBorder(
@@ -126,7 +149,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Completed()),
+                    MaterialPageRoute(builder: (context) => const Completed()),
                   );
                 },
                 child: Container(
