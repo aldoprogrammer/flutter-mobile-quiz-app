@@ -5,9 +5,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:quiz_app_api/completed.dart';
 import 'package:quiz_app_api/options.dart';
+import 'package:http/http.dart' as htpp;
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  Future api() async {
+    final response =
+        await htpp.get(Uri.parse("https://opentdb.com/api.php?amount=10"));
+  }
 
   @override
   Widget build(BuildContext context) {

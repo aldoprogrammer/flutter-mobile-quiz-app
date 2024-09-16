@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app_api/home_page.dart';
 
 class Completed extends StatelessWidget {
   const Completed({Key? key}) : super(key: key);
@@ -238,23 +239,163 @@ class Completed extends StatelessWidget {
             height: 40,
           ),
           Container(
-            margin: EdgeInsets.only(left: 25, right: 0),
-            child: const Center(
+            margin: const EdgeInsets.only(left: 15, right: 15),
+            child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                     horizontal: BorderSide.strokeAlignCenter),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
+                        },
+                        child: const CircleAvatar(
+                          backgroundColor: Color(0xff37AFA1),
+                          radius: 35,
+                          child: Center(
+                            child: Icon(Icons.refresh,
+                                size: 35,
+                                color:
+                                    Colors.white), // Use 'Icons.refresh' here
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        'Play Again',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      )
+                    ]),
+                    const Column(children: [
+                      CircleAvatar(
+                        backgroundColor: Color(0xffCB9771),
+                        radius: 35,
+                        child: Center(
+                          child: Icon(Icons.visibility_rounded,
+                              size: 35,
+                              color: Colors.white), // Use 'Icons.refresh' here
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Review Answer',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      )
+                    ]),
+                    Column(children: [
+                      const CircleAvatar(
+                        backgroundColor: Color(0xff37AFA1),
+                        radius: 35,
+                        child: Center(
+                          child: Icon(Icons.share,
+                              size: 35,
+                              color: Colors.white), // Use 'Icons.refresh' here
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        'Share',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      )
+                    ])
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 15, right: 15),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: BorderSide.strokeAlignCenter),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Column(children: [
                       CircleAvatar(
                         backgroundColor: Color(0xff37AFA1),
                         radius: 35,
                         child: Center(
-                          child: Icon(Icons.refresh,
+                          child: Icon(Icons.file_open_rounded,
                               size: 35,
                               color: Colors.white), // Use 'Icons.refresh' here
                         ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Generate PDF',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      )
+                    ]),
+                    Column(children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
+                        },
+                        child: const CircleAvatar(
+                          backgroundColor: Color(0xffad8ae8),
+                          radius: 35,
+                          child: Center(
+                            child: Icon(Icons.home,
+                                size: 35,
+                                color:
+                                    Colors.white), // Use 'Icons.refresh' here
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        'Home',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      )
+                    ]),
+                    const Column(children: [
+                      CircleAvatar(
+                        backgroundColor: Color(0xff5f6a6e),
+                        radius: 35,
+                        child: Center(
+                          child: Icon(Icons.settings_applications,
+                              size: 35,
+                              color: Colors.white), // Use 'Icons.refresh' here
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Leaderboard',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
                       )
                     ])
                   ],
