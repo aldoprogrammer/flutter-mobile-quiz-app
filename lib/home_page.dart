@@ -14,10 +14,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List responseData = [];
-  int number = 0;
+  int number = 0; // Current question index
   Timer? _timer;
   int _secondRemaining = 15;
   List<String> shuffledOptions = [];
+  final int totalQuestions = 10; // Total number of questions
+  int correctAnswers = 0; // Count correct answers
+  int wrongAnswers = 0; // Count wrong answers
 
   Future<void> api() async {
     try {
@@ -84,25 +87,27 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Column(
                           children: [
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                // Number of questions already answered
                                 Text(
-                                  '05',
-                                  style: TextStyle(
+                                  '${number}', // Current question index (0-based)
+                                  style: const TextStyle(
                                       color: Colors.green, fontSize: 20),
                                 ),
+                                // Number of remaining questions
                                 Text(
-                                  '07',
-                                  style: TextStyle(
+                                  '${totalQuestions - number}', // Remaining questions
+                                  style: const TextStyle(
                                       color: Colors.red, fontSize: 20),
                                 ),
                               ],
                             ),
-                            const Center(
+                            Center(
                               child: Text(
-                                "Question 3/10",
-                                style: TextStyle(
+                                "Question ${number + 1}/$totalQuestions", // Display current question number
+                                style: const TextStyle(
                                   color: Color(0xffA42FC1),
                                 ),
                               ),
@@ -147,7 +152,12 @@ class _HomePageState extends State<HomePage> {
               children: (responseData.isNotEmpty &&
                       responseData[number]['incorrect_answers'] != null)
                   ? shuffledOptions.map((option) {
-                      return Options(option: option.toString());
+                      return GestureDetector(
+                        onTap: () {
+                          handleOptionTap(option);
+                        },
+                        child: Options(option: option.toString()),
+                      );
                     }).toList()
                   : [],
             ),
@@ -183,6 +193,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Handle option tap
+  void handleOptionTap(String selectedOption) {
+    String correctAnswer = responseData[number]['correct_answer'];
+
+    if (selectedOption == correctAnswer) {
+      correctAnswers++; // Increment correct answers
+    } else {
+      wrongAnswers++; // Increment wrong answers
+    }
+    nextQuestion(); // Move to the next question
+  }
+
   // Navigate to the next question
   void nextQuestion() {
     if (number < responseData.length - 1) {
@@ -192,15 +214,21 @@ class _HomePageState extends State<HomePage> {
         resetTimer(); // Reset the timer for the next question
       });
     } else {
-      completed();
+      completed(); // Go to the completed screen when quiz is finished
     }
   }
 
-  // Navigate to the completed screen
+  // Navigate to the completed screen and pass the final score
   void completed() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const Completed()),
+      MaterialPageRoute(
+        builder: (context) => Completed(
+          correctAnswers: correctAnswers,
+          wrongAnswers: wrongAnswers,
+          totalQuestions: totalQuestions,
+        ),
+      ),
     );
   }
 
