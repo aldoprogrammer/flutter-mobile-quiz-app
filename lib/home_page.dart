@@ -1,12 +1,9 @@
+import 'dart:async';
 import 'dart:convert'; // Import for jsonDecode
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:quiz_app_api/completed.dart';
 import 'package:quiz_app_api/options.dart';
-import 'package:http/http.dart' as http; // Make sure to fix typo: htpp to http
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,15 +15,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List responseData = [];
   int number = 0;
+  Timer? _timer;
+  int _secondRemaining = 15;
+  List<String> shuffledOptions = [];
 
-  Future api() async {
-    final response =
-        await http.get(Uri.parse("https://opentdb.com/api.php?amount=10"));
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['results'];
-      setState(() {
-        responseData = data;
-      });
+  Future<void> api() async {
+    try {
+      final response =
+          await http.get(Uri.parse("https://opentdb.com/api.php?amount=10"));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['results'];
+        setState(() {
+          responseData = data;
+          updateShuffleOption();
+        });
+      } else {
+        throw Exception("Failed to load questions");
+      }
+    } catch (error) {
+      print("Error loading API data: $error");
     }
   }
 
@@ -34,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     api();
+    startTimer();
   }
 
   @override
@@ -102,38 +110,48 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(
                               height: 25,
                             ),
-                            Text(responseData.isNotEmpty
-                                ? responseData[number]['question']
-                                : '')
+                            Text(responseData.isNotEmpty &&
+                                    number < responseData.length
+                                ? responseData[number]['question'] ??
+                                    'No Question Available'
+                                : 'Loading Question...'),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  const Positioned(
-                      bottom: 210,
-                      left: 140,
-                      child: CircleAvatar(
-                        radius: 42,
-                        backgroundColor: Colors.white,
-                        child: Center(
-                          child: Text(
-                            '15',
-                            style: TextStyle(
-                              color: Color(0xffA42FC1),
-                              fontSize: 25,
-                            ),
+                  Positioned(
+                    bottom: 210,
+                    left: 140,
+                    child: CircleAvatar(
+                      radius: 42,
+                      backgroundColor: Colors.white,
+                      child: Center(
+                        child: Text(
+                          _secondRemaining.toString(),
+                          style: TextStyle(
+                            color: Color(0xffA42FC1),
+                            fontSize: 25,
                           ),
                         ),
-                      ))
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 10),
-            Options(option: 'Option A'),
-            Options(option: 'Option B'),
-            Options(option: 'Option C'),
-            Options(option: 'Option D'),
+
+            // Display shuffled options if available
+            Column(
+              children: (responseData.isNotEmpty &&
+                      responseData[number]['incorrect_answers'] != null)
+                  ? shuffledOptions.map((option) {
+                      return Options(option: option.toString());
+                    }).toList()
+                  : [],
+            ),
+
             const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -146,12 +164,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(10)),
                   elevation: 5,
                 ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Completed()),
-                  );
-                },
+                onPressed: nextQuestion,
                 child: Container(
                   alignment: Alignment.center,
                   child: const Text(
@@ -168,5 +181,73 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  // Navigate to the next question
+  void nextQuestion() {
+    if (number < responseData.length - 1) {
+      setState(() {
+        number++;
+        updateShuffleOption();
+        resetTimer(); // Reset the timer for the next question
+      });
+    } else {
+      completed();
+    }
+  }
+
+  // Navigate to the completed screen
+  void completed() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Completed()),
+    );
+  }
+
+  // Shuffle the answer options (correct and incorrect) for each question
+  void updateShuffleOption() {
+    if (responseData.isNotEmpty && number < responseData.length) {
+      setState(() {
+        shuffledOptions = shuffledOption(
+          [
+            responseData[number]['correct_answer'],
+            ...(responseData[number]['incorrect_answers'] as List),
+          ],
+        );
+      });
+    }
+  }
+
+  // Utility function to shuffle the options list
+  List<String> shuffledOption(List<String> options) {
+    List<String> shuffledOptions = List.from(options);
+    shuffledOptions.shuffle();
+    return shuffledOptions;
+  }
+
+  // Start a countdown timer
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      setState(() {
+        if (_secondRemaining > 0) {
+          _secondRemaining--; // Decrease the timer by 1 second
+        } else {
+          nextQuestion(); // Auto-move to the next question when time runs out
+        }
+      });
+    });
+  }
+
+  // Reset the countdown timer for each new question
+  void resetTimer() {
+    _timer?.cancel(); // Cancel the existing timer
+    _secondRemaining = 15; // Reset the timer to 15 seconds
+    startTimer(); // Start a new timer
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
   }
 }
